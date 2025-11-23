@@ -1,0 +1,246 @@
+package com.banking.controller;
+
+import com.banking.model.*;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * BankController - Mediates between the view and model layers
+ * Handles business logic and coordinates banking operations
+ */
+public class BankController {
+    
+    private final Bank bank;
+
+    public BankController(Bank bank) {
+        this.bank = bank;
+    }
+
+    // =========================================================================
+    // CUSTOMER OPERATIONS
+    // =========================================================================
+
+    /**
+     * Add a new customer to the bank system
+     */
+    public boolean addCustomer(String customerId, String firstName, String surname, String address) {
+        // Validate input
+        if (customerId == null || customerId.trim().isEmpty()) {
+            return false;
+        }
+
+        // Check if customer already exists
+        if (bank.findCustomerById(customerId).isPresent()) {
+            return false;
+        }
+
+        // Create and add customer
+        Customer customer = new Customer(customerId, firstName, surname, address);
+        bank.addCustomer(customer);
+        return true;
+    }
+
+    /**
+     * Retrieve customer by ID
+     */
+    public Optional<Customer> getCustomer(String customerId) {
+        return bank.findCustomerById(customerId);
+    }
+
+    /**
+     * Get all customers in the bank
+     */
+    public List<Customer> getAllCustomers() {
+        return bank.getCustomers();
+    }
+
+    // =========================================================================
+    // ACCOUNT OPERATIONS
+    // =========================================================================
+
+    /**
+     * Open a savings account for a customer
+     */
+    public boolean openSavingsAccount(String accountNumber, double initialDeposit,
+                                     String branch, String customerId) {
+        
+        Optional<Customer> customer = bank.findCustomerById(customerId);
+        if (customer.isEmpty()) {
+            return false;
+        }
+
+        SavingsAccount account = new SavingsAccount(accountNumber, initialDeposit, branch, customer.get());
+        bank.addAccount(account);
+        return true;
+    }
+
+    /**
+     * Open an investment account for a customer
+     * Requires minimum deposit of BWP 500.00
+     */
+    public boolean openInvestmentAccount(String accountNumber, double initialDeposit,
+                                        String branch, String customerId) {
+        
+        // Validate minimum deposit
+        if (initialDeposit < 500.00) {
+            return false;
+        }
+
+        Optional<Customer> customer = bank.findCustomerById(customerId);
+        if (customer.isEmpty()) {
+            return false;
+        }
+
+        try {
+            InvestmentAccount account = new InvestmentAccount(
+                accountNumber, initialDeposit, branch, customer.get()
+            );
+            bank.addAccount(account);
+            return true;
+
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Open a cheque account for a customer
+     * Requires employer information for working individuals
+     */
+    public boolean openChequeAccount(String accountNumber, double initialDeposit,
+                                    String branch, String customerId,
+                                    String employerName, String companyAddress) {
+        
+        Optional<Customer> customer = bank.findCustomerById(customerId);
+        if (customer.isEmpty()) {
+            return false;
+        }
+
+        ChequeAccount account = new ChequeAccount(
+            accountNumber,
+            initialDeposit,
+            branch,
+            customer.get(),
+            employerName,
+            companyAddress
+        );
+
+        bank.addAccount(account);
+        return true;
+    }
+
+    // =========================================================================
+    // TRANSACTION OPERATIONS
+    // =========================================================================
+
+    /**
+     * Deposit funds into an account
+     */
+    public boolean deposit(String accountNumber, double amount) {
+        return bank.deposit(accountNumber, amount);
+    }
+
+    /**
+     * Withdraw funds from an account
+     */
+    public boolean withdraw(String accountNumber, double amount) {
+        return bank.withdraw(accountNumber, amount);
+    }
+
+    /**
+     * Check account balance
+     */
+    public Optional<Double> getBalance(String accountNumber) {
+        return bank.findAccountByNumber(accountNumber)
+                   .map(Account::getBalance);
+    }
+
+    /**
+     * Get all accounts for a specific customer
+     */
+    public List<Account> getCustomerAccounts(String customerId) {
+        return bank.getCustomerAccounts(customerId);
+    }
+
+    /**
+     * Apply monthly interest to all applicable accounts
+     */
+    public void applyMonthlyInterest() {
+        bank.applyMonthlyInterest();
+    }
+
+    // =========================================================================
+    // BANK INFORMATION
+    // =========================================================================
+
+    /**
+     * Get the bank name
+     */
+    public String getBankName() {
+        return bank.getBankName();
+    }
+
+    /**
+     * Get total number of accounts in the bank
+     */
+    public int getTotalAccounts() {
+        return bank.getAccounts().size();
+    }
+
+    /**
+     * Get total number of customers in the bank
+     */
+    public int getTotalCustomers() {
+        return bank.getCustomers().size();
+    }
+
+    // =========================================================================
+    // ADDITIONAL METHODS FOR MAIN.JAVA INTEGRATION
+    // =========================================================================
+
+    /**
+     * Check if customer exists (for Main.java integration)
+     */
+    public boolean customerExists(String customerId) {
+        return bank.findCustomerById(customerId).isPresent();
+    }
+
+    /**
+     * Get account by account number (for Main.java integration)
+     */
+    public Optional<Account> getAccount(String accountNumber) {
+        return bank.findAccountByNumber(accountNumber);
+    }
+
+    /**
+     * Get all accounts in the bank (for Main.java integration)
+     */
+    public List<Account> getAllAccounts() {
+        return bank.getAccounts();
+    }
+
+    /**
+     * Print bank summary (for Main.java integration)
+     */
+    public void printBankSummary() {
+        System.out.println("\n=== BANK SUMMARY ===");
+        System.out.println("Bank Name: " + getBankName());
+        System.out.println("Total Customers: " + getTotalCustomers());
+        System.out.println("Total Accounts: " + getTotalAccounts());
+        
+        System.out.println("\nAccount Types Breakdown:");
+        long savingsCount = bank.getAccounts().stream()
+                .filter(acc -> acc.getAccountType() == AccountType.SAVINGS)
+                .count();
+        long investmentCount = bank.getAccounts().stream()
+                .filter(acc -> acc.getAccountType() == AccountType.INVESTMENT)
+                .count();
+        long chequeCount = bank.getAccounts().stream()
+                .filter(acc -> acc.getAccountType() == AccountType.CHEQUE)
+                .count();
+        
+        System.out.println("Savings Accounts: " + savingsCount);
+        System.out.println("Investment Accounts: " + investmentCount);
+        System.out.println("Cheque Accounts: " + chequeCount);
+    }
+}
