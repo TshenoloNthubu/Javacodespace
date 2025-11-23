@@ -1,0 +1,1358 @@
+Index: .idea/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/.gitignore b/.idea/.gitignore
+new file mode 100644
+--- /dev/null	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
++++ b/.idea/.gitignore	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
+@@ -0,0 +1,8 @@
++# Default ignored files
++/shelf/
++/workspace.xml
++# Editor-based HTTP Client requests
++/httpRequests/
++# Datasource local storage ignored files
++/dataSources/
++/dataSources.local.xml
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+new file mode 100644
+--- /dev/null	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
++++ b/.idea/misc.xml	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_25" default="true" project-jdk-name="25" project-jdk-type="JavaSDK">
++    <output url="file://$PROJECT_DIR$/out" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/modules.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules.xml b/.idea/modules.xml
+new file mode 100644
+--- /dev/null	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
++++ b/.idea/modules.xml	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ProjectModuleManager">
++    <modules>
++      <module fileurl="file://$PROJECT_DIR$/.idea/src.iml" filepath="$PROJECT_DIR$/.idea/src.iml" />
++    </modules>
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/src.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/src.iml b/.idea/src.iml
+new file mode 100644
+--- /dev/null	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
++++ b/.idea/src.iml	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
+@@ -0,0 +1,9 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module type="JAVA_MODULE" version="4">
++  <component name="NewModuleRootManager" inherit-compiler-output="true">
++    <exclude-output />
++    <content url="file://$MODULE_DIR$" />
++    <orderEntry type="inheritedJdk" />
++    <orderEntry type="sourceFolder" forTests="false" />
++  </component>
++</module>
+\ No newline at end of file
+Index: main/java/com/banking/Main.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/java/com/banking/Main.java b/main/java/com/banking/Main.java
+new file mode 100644
+--- /dev/null	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
++++ b/main/java/com/banking/Main.java	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
+@@ -0,0 +1,233 @@
++package com.banking;
++
++import com.banking.controller.BankController;
++import com.banking.dao.DatabaseConnection;
++import com.banking.model.Bank;
++import com.banking.model.Customer;
++import com.banking.model.Account;
++import java.util.Scanner;
++
++public class Main {
++
++    private static BankController bankController;
++    private static Scanner scanner = new Scanner(System.in);
++
++    public static void main(String[] args) {
++        System.out.println("=== Banking System Starting ===");
++
++        // Initialize database and core components
++        DatabaseConnection.initializeDatabase();
++        Bank bank = new Bank("Botswana Banking System");
++        bankController = new BankController(bank);
++
++        // Load sample data for testing
++        loadSampleData();
++
++        boolean running = true;
++
++        while (running) {
++            printMenu();
++            System.out.print("Enter choice: ");
++            String choice = scanner.nextLine().trim();
++
++            switch (choice) {
++                case "1":
++                    createCustomer();
++                    break;
++                case "2":
++                    openAccount();
++                    break;
++                case "3":
++                    deposit();
++                    break;
++                case "4":
++                    withdraw();
++                    break;
++                case "5":
++                    checkBalance();
++                    break;
++                case "6":
++                    listCustomers();
++                    break;
++                case "7":
++                    applyInterest();
++                    break;
++                case "0":
++                    running = false;
++                    System.out.println("Goodbye!");
++                    break;
++                default:
++                    System.out.println("Invalid choice.");
++            }
++        }
++        scanner.close();
++    }
++
++    private static void printMenu() {
++        System.out.println("\n=== BANKING SYSTEM ===");
++        System.out.println("1. Create Customer");
++        System.out.println("2. Open Account");
++        System.out.println("3. Deposit");
++        System.out.println("4. Withdraw");
++        System.out.println("5. Check Balance");
++        System.out.println("6. List Customers & Accounts");
++        System.out.println("7. Apply Monthly Interest");
++        System.out.println("0. Exit");
++    }
++
++    private static void loadSampleData() {
++        // Add sample customers and accounts for testing
++        bankController.addCustomer("C001", "John", "Smith", "123 Main St, Gaborone");
++        bankController.addCustomer("C002", "Mary", "Johnson", "456 Broad St, Francistown");
++        bankController.addCustomer("C003", "David", "Brown", "789 River Rd, Maun");
++
++        bankController.openSavingsAccount("SAV001", 1000.00, "Main Branch", "C001");
++        bankController.openInvestmentAccount("INV001", 1500.00, "Main Branch", "C001");
++        bankController.openChequeAccount("CHQ001", 2000.00, "City Branch", "C002", "Tech Corp", "Gaborone");
++
++        System.out.println("✓ Sample data loaded successfully");
++    }
++
++    private static void createCustomer() {
++        System.out.print("Enter Customer ID: ");
++        String customerId = scanner.nextLine();
++
++        System.out.print("Enter First Name: ");
++        String firstName = scanner.nextLine();
++
++        System.out.print("Enter Surname: ");
++        String surname = scanner.nextLine();
++
++        System.out.print("Enter Address: ");
++        String address = scanner.nextLine();
++
++        boolean success = bankController.addCustomer(customerId, firstName, surname, address);
++        if (success) {
++            System.out.println("✓ Customer created successfully!");
++        } else {
++            System.out.println("❌ Failed to create customer. Customer ID might already exist.");
++        }
++    }
++
++    private static void openAccount() {
++        System.out.print("Enter Customer ID: ");
++        String customerId = scanner.nextLine();
++
++        System.out.println("Select Account Type:");
++        System.out.println("1. Savings Account");
++        System.out.println("2. Investment Account (Min: BWP 500)");
++        System.out.println("3. Cheque Account");
++        System.out.print("Enter choice: ");
++        String accountTypeChoice = scanner.nextLine();
++
++        System.out.print("Enter Account Number: ");
++        String accountNumber = scanner.nextLine();
++
++        System.out.print("Enter Initial Deposit: ");
++        double initialDeposit = Double.parseDouble(scanner.nextLine());
++
++        System.out.print("Enter Branch: ");
++        String branch = scanner.nextLine();
++
++        boolean success = false;
++
++        switch (accountTypeChoice) {
++            case "1":
++                success = bankController.openSavingsAccount(accountNumber, initialDeposit, branch, customerId);
++                break;
++            case "2":
++                success = bankController.openInvestmentAccount(accountNumber, initialDeposit, branch, customerId);
++                break;
++            case "3":
++                System.out.print("Enter Employer Name: ");
++                String employerName = scanner.nextLine();
++                System.out.print("Enter Company Address: ");
++                String companyAddress = scanner.nextLine();
++                success = bankController.openChequeAccount(accountNumber, initialDeposit, branch, customerId, employerName, companyAddress);
++                break;
++            default:
++                System.out.println("Invalid account type.");
++                return;
++        }
++
++        if (success) {
++            System.out.println("✓ Account opened successfully!");
++        } else {
++            System.out.println("❌ Failed to open account. Check customer ID and requirements.");
++        }
++    }
++
++    private static void deposit() {
++        System.out.print("Enter Account Number: ");
++        String accountNumber = scanner.nextLine();
++
++        System.out.print("Enter Amount: ");
++        double amount = Double.parseDouble(scanner.nextLine());
++
++        boolean success = bankController.deposit(accountNumber, amount);
++        if (success) {
++            System.out.println("✓ Deposit completed successfully!");
++        } else {
++            System.out.println("❌ Deposit failed. Check account number.");
++        }
++    }
++
++    private static void withdraw() {
++        System.out.print("Enter Account Number: ");
++        String accountNumber = scanner.nextLine();
++
++        System.out.print("Enter Amount: ");
++        double amount = Double.parseDouble(scanner.nextLine());
++
++        boolean success = bankController.withdraw(accountNumber, amount);
++        if (success) {
++            System.out.println("✓ Withdrawal completed successfully!");
++        } else {
++            System.out.println("❌ Withdrawal failed. Check account number and balance.");
++        }
++    }
++
++    private static void checkBalance() {
++        System.out.print("Enter Account Number: ");
++        String accountNumber = scanner.nextLine();
++
++        bankController.getBalance(accountNumber).ifPresentOrElse(
++                balance -> System.out.println("Account Balance: BWP " + balance),
++                () -> System.out.println("❌ Account not found.")
++        );
++    }
++
++    private static void listCustomers() {
++        System.out.println("\n=== CUSTOMERS ===");
++        var customers = bankController.getAllCustomers();
++
++        if (customers.isEmpty()) {
++            System.out.println("No customers found.");
++            return;
++        }
++
++        for (Customer customer : customers) {
++            System.out.println("\nCustomer: " + customer.getFirstName() + " " + customer.getSurname());
++            System.out.println("ID: " + customer.getCustomerId() + " | Address: " + customer.getAddress());
++
++            var accounts = bankController.getCustomerAccounts(customer.getCustomerId());
++            if (accounts.isEmpty()) {
++                System.out.println("  No accounts");
++            } else {
++                System.out.println("  Accounts:");
++                for (Account account : accounts) {
++                    System.out.printf("  - %s (%s): BWP %.2f | Branch: %s%n",
++                            account.getAccountNumber(),
++                            account.getAccountType(),
++                            account.getBalance(),
++                            account.getBranch());
++                }
++            }
++        }
++    }
++
++    private static void applyInterest() {
++        bankController.applyMonthlyInterest();
++        System.out.println("✓ Monthly interest applied to all accounts!");
++    }
++}
+\ No newline at end of file
+Index: main/java/com/banking/MainFX.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/java/com/banking/MainFX.java b/main/java/com/banking/MainFX.java
+new file mode 100644
+--- /dev/null	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
++++ b/main/java/com/banking/MainFX.java	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
+@@ -0,0 +1,31 @@
++package com.banking;
++
++import com.banking.controller.BankController;
++import com.banking.model.Bank;
++import com.banking.view.MainView;
++import javafx.application.Application;
++import javafx.stage.Stage;
++
++public class MainFX extends Application {
++
++    private static BankController bankController;
++
++    public static BankController getBankController() {
++        return bankController;
++    }
++
++    @Override
++    public void start(Stage stage) {
++        // Initialize bank system for GUI mode
++        Bank bank = new Bank("Botswana Banking System");
++        bankController = new BankController(bank);
++
++        // Launch your JavaFX UI
++        new MainView().start(stage);
++    }
++
++    public static void main(String[] args) {
++        launch(args);
++    }
++}
++
+Index: main/java/com/banking/controller/BankController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/java/com/banking/controller/BankController.java b/main/java/com/banking/controller/BankController.java
+new file mode 100644
+--- /dev/null	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
++++ b/main/java/com/banking/controller/BankController.java	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
+@@ -0,0 +1,246 @@
++package com.banking.controller;
++
++import com.banking.model.*;
++import java.util.List;
++import java.util.Optional;
++
++/**
++ * BankController - Mediates between the view and model layers
++ * Handles business logic and coordinates banking operations
++ */
++public class BankController {
++
++    private final Bank bank;
++
++    public BankController(Bank bank) {
++        this.bank = bank;
++    }
++
++    // =========================================================================
++    // CUSTOMER OPERATIONS
++    // =========================================================================
++
++    /**
++     * Add a new customer to the bank system
++     */
++    public boolean addCustomer(String customerId, String firstName, String surname, String address) {
++        // Validate input
++        if (customerId == null || customerId.trim().isEmpty()) {
++            return false;
++        }
++
++        // Check if customer already exists
++        if (bank.findCustomerById(customerId).isPresent()) {
++            return false;
++        }
++
++        // Create and add customer
++        Customer customer = new Customer(customerId, firstName, surname, address);
++        bank.addCustomer(customer);
++        return true;
++    }
++
++    /**
++     * Retrieve customer by ID
++     */
++    public Optional<Customer> getCustomer(String customerId) {
++        return bank.findCustomerById(customerId);
++    }
++
++    /**
++     * Get all customers in the bank
++     */
++    public List<Customer> getAllCustomers() {
++        return bank.getCustomers();
++    }
++
++    // =========================================================================
++    // ACCOUNT OPERATIONS
++    // =========================================================================
++
++    /**
++     * Open a savings account for a customer
++     */
++    public boolean openSavingsAccount(String accountNumber, double initialDeposit,
++                                      String branch, String customerId) {
++
++        Optional<Customer> customer = bank.findCustomerById(customerId);
++        if (customer.isEmpty()) {
++            return false;
++        }
++
++        SavingsAccount account = new SavingsAccount(accountNumber, initialDeposit, branch, customer.get());
++        bank.addAccount(account);
++        return true;
++    }
++
++    /**
++     * Open an investment account for a customer
++     * Requires minimum deposit of BWP 500.00
++     */
++    public boolean openInvestmentAccount(String accountNumber, double initialDeposit,
++                                         String branch, String customerId) {
++
++        // Validate minimum deposit
++        if (initialDeposit < 500.00) {
++            return false;
++        }
++
++        Optional<Customer> customer = bank.findCustomerById(customerId);
++        if (customer.isEmpty()) {
++            return false;
++        }
++
++        try {
++            InvestmentAccount account = new InvestmentAccount(
++                    accountNumber, initialDeposit, branch, customer.get()
++            );
++            bank.addAccount(account);
++            return true;
++
++        } catch (IllegalArgumentException e) {
++            return false;
++        }
++    }
++
++    /**
++     * Open a cheque account for a customer
++     * Requires employer information for working individuals
++     */
++    public boolean openChequeAccount(String accountNumber, double initialDeposit,
++                                     String branch, String customerId,
++                                     String employerName, String companyAddress) {
++
++        Optional<Customer> customer = bank.findCustomerById(customerId);
++        if (customer.isEmpty()) {
++            return false;
++        }
++
++        ChequeAccount account = new ChequeAccount(
++                accountNumber,
++                initialDeposit,
++                branch,
++                customer.get(),
++                employerName,
++                companyAddress
++        );
++
++        bank.addAccount(account);
++        return true;
++    }
++
++    // =========================================================================
++    // TRANSACTION OPERATIONS
++    // =========================================================================
++
++    /**
++     * Deposit funds into an account
++     */
++    public boolean deposit(String accountNumber, double amount) {
++        return bank.deposit(accountNumber, amount);
++    }
++
++    /**
++     * Withdraw funds from an account
++     */
++    public boolean withdraw(String accountNumber, double amount) {
++        return bank.withdraw(accountNumber, amount);
++    }
++
++    /**
++     * Check account balance
++     */
++    public Optional<Double> getBalance(String accountNumber) {
++        return bank.findAccountByNumber(accountNumber)
++                .map(Account::getBalance);
++    }
++
++    /**
++     * Get all accounts for a specific customer
++     */
++    public List<Account> getCustomerAccounts(String customerId) {
++        return bank.getCustomerAccounts(customerId);
++    }
++
++    /**
++     * Apply monthly interest to all applicable accounts
++     */
++    public void applyMonthlyInterest() {
++        bank.applyMonthlyInterest();
++    }
++
++    // =========================================================================
++    // BANK INFORMATION
++    // =========================================================================
++
++    /**
++     * Get the bank name
++     */
++    public String getBankName() {
++        return bank.getBankName();
++    }
++
++    /**
++     * Get total number of accounts in the bank
++     */
++    public int getTotalAccounts() {
++        return bank.getAccounts().size();
++    }
++
++    /**
++     * Get total number of customers in the bank
++     */
++    public int getTotalCustomers() {
++        return bank.getCustomers().size();
++    }
++
++    // =========================================================================
++    // ADDITIONAL METHODS FOR MAIN.JAVA INTEGRATION
++    // =========================================================================
++
++    /**
++     * Check if customer exists (for Main.java integration)
++     */
++    public boolean customerExists(String customerId) {
++        return bank.findCustomerById(customerId).isPresent();
++    }
++
++    /**
++     * Get account by account number (for Main.java integration)
++     */
++    public Optional<Account> getAccount(String accountNumber) {
++        return bank.findAccountByNumber(accountNumber);
++    }
++
++    /**
++     * Get all accounts in the bank (for Main.java integration)
++     */
++    public List<Account> getAllAccounts() {
++        return bank.getAccounts();
++    }
++
++    /**
++     * Print bank summary (for Main.java integration)
++     */
++    public void printBankSummary() {
++        System.out.println("\n=== BANK SUMMARY ===");
++        System.out.println("Bank Name: " + getBankName());
++        System.out.println("Total Customers: " + getTotalCustomers());
++        System.out.println("Total Accounts: " + getTotalAccounts());
++
++        System.out.println("\nAccount Types Breakdown:");
++        long savingsCount = bank.getAccounts().stream()
++                .filter(acc -> acc.getAccountType() == AccountType.SAVINGS)
++                .count();
++        long investmentCount = bank.getAccounts().stream()
++                .filter(acc -> acc.getAccountType() == AccountType.INVESTMENT)
++                .count();
++        long chequeCount = bank.getAccounts().stream()
++                .filter(acc -> acc.getAccountType() == AccountType.CHEQUE)
++                .count();
++
++        System.out.println("Savings Accounts: " + savingsCount);
++        System.out.println("Investment Accounts: " + investmentCount);
++        System.out.println("Cheque Accounts: " + chequeCount);
++    }
++}
+\ No newline at end of file
+Index: main/java/com/banking/dao/DatabaseConnection.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/java/com/banking/dao/DatabaseConnection.java b/main/java/com/banking/dao/DatabaseConnection.java
+new file mode 100644
+--- /dev/null	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
++++ b/main/java/com/banking/dao/DatabaseConnection.java	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
+@@ -0,0 +1,61 @@
++package com.banking.dao;
++
++import java.sql.Connection;
++import java.sql.DriverManager;
++import java.sql.SQLException;
++import java.sql.Statement;
++
++public class DatabaseConnection {
++
++    private static final String URL = "jdbc:h2:mem:banking;DB_CLOSE_DELAY=-1";
++    private static final String USER = "sa";
++    private static final String PASSWORD = "";
++
++    private static Connection connection;
++
++    public static Connection getConnection() throws SQLException {
++        if (connection == null || connection.isClosed()) {
++            connection = DriverManager.getConnection(URL, USER, PASSWORD);
++        }
++        return connection;
++    }
++
++    public static void initializeDatabase() {
++        try (Connection conn = getConnection(); Statement stmt = conn.createStatement()) {
++
++            // Create customers table (NO TEXT BLOCKS)
++            String createCustomersTable =
++                    "CREATE TABLE IF NOT EXISTS customers (" +
++                            "customer_id VARCHAR(20) PRIMARY KEY, " +
++                            "first_name VARCHAR(50) NOT NULL, " +
++                            "surname VARCHAR(50) NOT NULL, " +
++                            "address VARCHAR(200), " +
++                            "phone_number VARCHAR(15), " +
++                            "email VARCHAR(100), " +
++                            "created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
++                            ");";
++
++            // Create accounts table
++            String createAccountsTable =
++                    "CREATE TABLE IF NOT EXISTS accounts (" +
++                            "account_number VARCHAR(20) PRIMARY KEY, " +
++                            "customer_id VARCHAR(20) NOT NULL, " +
++                            "account_type VARCHAR(20) NOT NULL, " +
++                            "balance DECIMAL(15,2) DEFAULT 0.00, " +
++                            "branch VARCHAR(50), " +
++                            "employer_name VARCHAR(100), " +
++                            "company_address VARCHAR(200), " +
++                            "created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
++                            "FOREIGN KEY (customer_id) REFERENCES customers(customer_id)" +
++                            ");";
++
++            stmt.execute(createCustomersTable);
++            stmt.execute(createAccountsTable);
++
++            System.out.println("Database tables created successfully");
++
++        } catch (SQLException e) {
++            System.err.println("Error initializing database: " + e.getMessage());
++        }
++    }
++}
+Index: main/java/com/banking/model/Account.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/java/com/banking/model/Account.java b/main/java/com/banking/model/Account.java
+new file mode 100644
+--- /dev/null	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
++++ b/main/java/com/banking/model/Account.java	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
+@@ -0,0 +1,44 @@
++package com.banking.model;
++
++public abstract class Account {
++
++    protected String accountNumber;
++    protected double balance;
++    protected String branch;
++    protected Customer customer;
++    protected AccountType accountType;
++
++    public Account(String accountNumber, double balance, String branch,
++                   Customer customer, AccountType accountType) {
++        this.accountNumber = accountNumber;
++        this.balance = balance;
++        this.branch = branch;
++        this.customer = customer;
++        this.accountType = accountType;
++    }
++
++    public abstract boolean withdraw(double amount);
++    public abstract void applyMonthlyInterest();
++
++    public void deposit(double amount) {
++        if (amount > 0) {
++            balance += amount;
++            System.out.println("Deposited: " + amount + " New Balance: " + balance);
++        }
++    }
++
++    public double getBalance() { return balance; }
++    public String getAccountNumber() { return accountNumber; }
++    public Customer getCustomer() { return customer; }
++    public AccountType getAccountType() { return accountType; }
++    public String getBranch() { return branch; }
++
++    @Override
++    public String toString() {
++        return accountType + " Account{" +
++                "accountNumber='" + accountNumber + '\'' +
++                ", balance=" + balance +
++                ", branch='" + branch + '\'' +
++                '}';
++    }
++}
+Index: main/java/com/banking/model/AccountType.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/java/com/banking/model/AccountType.java b/main/java/com/banking/model/AccountType.java
+new file mode 100644
+--- /dev/null	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
++++ b/main/java/com/banking/model/AccountType.java	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
+@@ -0,0 +1,7 @@
++package com.banking.model;
++
++public enum AccountType {
++    SAVINGS,
++    CHEQUE,
++    INVESTMENT
++}
+Index: main/java/com/banking/model/Bank.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/java/com/banking/model/Bank.java b/main/java/com/banking/model/Bank.java
+new file mode 100644
+--- /dev/null	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
++++ b/main/java/com/banking/model/Bank.java	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
+@@ -0,0 +1,73 @@
++package com.banking.model;
++
++import java.util.ArrayList;
++import java.util.List;
++import java.util.Optional;
++
++public class Bank {
++    private List<Customer> customers;
++    private List<Account> accounts;
++    private String bankName;
++
++    public Bank(String bankName) {
++        this.bankName = bankName;
++        this.customers = new ArrayList<>();
++        this.accounts = new ArrayList<>();
++    }
++
++    // Customer management
++    public void addCustomer(Customer customer) {
++        customers.add(customer);
++    }
++
++    public Optional<Customer> findCustomerById(String customerId) {
++        return customers.stream()
++                .filter(c -> c.getCustomerId().equals(customerId))
++                .findFirst();
++    }
++
++    // Account management
++    public void addAccount(Account account) {
++        accounts.add(account);
++        account.getCustomer().addAccount(account);
++    }
++
++    public Optional<Account> findAccountByNumber(String accountNumber) {
++        return accounts.stream()
++                .filter(a -> a.getAccountNumber().equals(accountNumber))
++                .findFirst();
++    }
++
++    public List<Account> getCustomerAccounts(String customerId) {
++        return findCustomerById(customerId)
++                .map(Customer::getAccounts)
++                .orElse(new ArrayList<>());
++    }
++
++    // Transaction methods
++    public boolean deposit(String accountNumber, double amount) {
++        Optional<Account> account = findAccountByNumber(accountNumber);
++        if (account.isPresent() && amount > 0) {
++            account.get().deposit(amount);
++            return true;
++        }
++        return false;
++    }
++
++    public boolean withdraw(String accountNumber, double amount) {
++        Optional<Account> account = findAccountByNumber(accountNumber);
++        return account.map(acc -> acc.withdraw(amount)).orElse(false);
++    }
++
++    // Apply monthly interest to all interest-bearing accounts
++    public void applyMonthlyInterest() {
++        for (Account account : accounts) {
++            account.applyMonthlyInterest();
++        }
++    }
++
++    // Getters
++    public List<Customer> getCustomers() { return new ArrayList<>(customers); }
++    public List<Account> getAccounts() { return new ArrayList<>(accounts); }
++    public String getBankName() { return bankName; }
++}
+\ No newline at end of file
+Index: main/java/com/banking/model/ChequeAccount.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/java/com/banking/model/ChequeAccount.java b/main/java/com/banking/model/ChequeAccount.java
+new file mode 100644
+--- /dev/null	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
++++ b/main/java/com/banking/model/ChequeAccount.java	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
+@@ -0,0 +1,38 @@
++package com.banking.model;
++
++public class ChequeAccount extends Account {
++
++    private String employerName;
++    private String companyAddress;
++
++    public ChequeAccount(String accountNumber, double balance, String branch, Customer customer,
++                         String employerName, String companyAddress) {
++        super(accountNumber, balance, branch, customer, AccountType.CHEQUE);
++        this.employerName = employerName;
++        this.companyAddress = companyAddress;
++    }
++
++    @Override
++    public boolean withdraw(double amount) {
++        if (amount > 0 && amount <= balance) {
++            balance -= amount;
++            System.out.println("Withdrawn: " + amount);
++            return true;
++        }
++        System.out.println("Insufficient funds");
++        return false;
++    }
++
++    @Override
++    public void applyMonthlyInterest() {
++        System.out.println("No interest on Cheque Account");
++    }
++
++    public String getEmployerName() { return employerName; }
++    public String getCompanyAddress() { return companyAddress; }
++
++    @Override
++    public String toString() {
++        return super.toString() + " Employer: " + employerName;
++    }
++}
+Index: main/java/com/banking/model/Customer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/java/com/banking/model/Customer.java b/main/java/com/banking/model/Customer.java
+new file mode 100644
+--- /dev/null	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
++++ b/main/java/com/banking/model/Customer.java	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
+@@ -0,0 +1,54 @@
++package com.banking.model;
++
++import java.util.ArrayList;
++import java.util.List;
++
++public class Customer {
++    private String customerId;
++    private String firstName;
++    private String surname;
++    private String address;
++    private String phoneNumber;
++    private String email;
++    private List<Account> accounts;
++
++    public Customer(String customerId, String firstName, String surname,
++                    String address, String phoneNumber, String email) {
++
++        this.customerId = customerId;
++        this.firstName = firstName;
++        this.surname = surname;
++        this.address = address;
++        this.phoneNumber = phoneNumber;
++        this.email = email;
++        this.accounts = new ArrayList<>();
++    }
++
++    public String getCustomerId() { return customerId; }
++    public String getFirstName() { return firstName; }
++    public String getSurname() { return surname; }
++    public String getAddress() { return address; }
++    public String getPhoneNumber() { return phoneNumber; }
++    public String getEmail() { return email; }
++    public List<Account> getAccounts() { return accounts; }
++
++    public void addAccount(Account account) {
++        accounts.add(account);
++    }
++
++    public boolean removeAccount(Account account) {
++        return accounts.remove(account);
++    }
++
++    @Override
++    public String toString() {
++        return "Customer{" +
++                "ID='" + customerId + '\'' +
++                ", Name='" + firstName + " " + surname + '\'' +
++                ", Address='" + address + '\'' +
++                ", Phone='" + phoneNumber + '\'' +
++                ", Email='" + email + '\'' +
++                ", Accounts=" + accounts.size() +
++                '}';
++    }
++}
+Index: main/java/com/banking/model/InvestmentAccount.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/java/com/banking/model/InvestmentAccount.java b/main/java/com/banking/model/InvestmentAccount.java
+new file mode 100644
+--- /dev/null	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
++++ b/main/java/com/banking/model/InvestmentAccount.java	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
+@@ -0,0 +1,33 @@
++package com.banking.model;
++
++public class InvestmentAccount extends Account {
++
++    private static final double MINIMUM_BALANCE = 500.00;
++    private static final double MONTHLY_INTEREST_RATE = 0.05; // 5%
++
++    public InvestmentAccount(String accountNumber, double balance, String branch, Customer customer) {
++        super(accountNumber, balance, branch, customer, AccountType.INVESTMENT);
++
++        if (balance < MINIMUM_BALANCE) {
++            throw new IllegalArgumentException("Minimum balance must be " + MINIMUM_BALANCE);
++        }
++    }
++
++    @Override
++    public boolean withdraw(double amount) {
++        if (amount > 0 && amount <= balance) {
++            balance -= amount;
++            System.out.println("Withdrawn: " + amount);
++            return true;
++        }
++        System.out.println("Insufficient funds");
++        return false;
++    }
++
++    @Override
++    public void applyMonthlyInterest() {
++        double interest = balance * MONTHLY_INTEREST_RATE;
++        balance += interest;
++        System.out.println("Interest applied: " + interest);
++    }
++}
+Index: main/java/com/banking/model/SavingsAccount.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/java/com/banking/model/SavingsAccount.java b/main/java/com/banking/model/SavingsAccount.java
+new file mode 100644
+--- /dev/null	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
++++ b/main/java/com/banking/model/SavingsAccount.java	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
+@@ -0,0 +1,23 @@
++package com.banking.model;
++
++public class SavingsAccount extends Account {
++
++    private static final double MONTHLY_INTEREST_RATE = 0.0005; // 0.05%
++
++    public SavingsAccount(String accountNumber, double balance, String branch, Customer customer) {
++        super(accountNumber, balance, branch, customer, AccountType.SAVINGS);
++    }
++
++    @Override
++    public boolean withdraw(double amount) {
++        System.out.println("Withdrawals not allowed for Savings Account");
++        return false;
++    }
++
++    @Override
++    public void applyMonthlyInterest() {
++        double interest = balance * MONTHLY_INTEREST_RATE;
++        balance += interest;
++        System.out.println("Applied monthly interest: " + interest);
++    }
++}
+Index: main/java/com/banking/view/MainView.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/java/com/banking/view/MainView.java b/main/java/com/banking/view/MainView.java
+new file mode 100644
+--- /dev/null	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
++++ b/main/java/com/banking/view/MainView.java	(revision ba252d77dd9f2c81ea5a00ec64718ea68691af34)
+@@ -0,0 +1,318 @@
++package com.banking.view;
++
++import com.banking.Main;
++import com.banking.controller.BankController;
++import com.banking.model.Customer;
++import javafx.application.Application;
++import javafx.collections.FXCollections;
++import javafx.collections.ObservableList;
++import javafx.geometry.Insets;
++import javafx.scene.Scene;
++import javafx.scene.control.*;
++import javafx.scene.layout.*;
++import javafx.stage.Stage;
++
++public class MainView extends Application {
++
++    private BankController bankController;
++    private ObservableList<Customer> customers;
++
++    @Override
++    public void start(Stage primaryStage) {
++        // FIXED: Use Main.getBankController() instead of MainFX
++        bankController = MainFX.getBankController();
++
++        // Load customers into table
++        customers = FXCollections.observableArrayList(bankController.getAllCustomers());
++
++        initializeUI(primaryStage);
++    }
++
++    private void initializeUI(Stage primaryStage) {
++        BorderPane root = new BorderPane();
++        root.setPadding(new Insets(10));
++
++        root.setTop(createMenuBar());
++        root.setCenter(createTabPane());
++
++        Scene scene = new Scene(root, 900, 700);
++        primaryStage.setTitle("Botswana Banking System");
++        primaryStage.setScene(scene);
++        primaryStage.show();
++    }
++
++    private MenuBar createMenuBar() {
++        MenuBar menuBar = new MenuBar();
++
++        Menu fileMenu = new Menu("File");
++        MenuItem refreshItem = new MenuItem("Refresh Data");
++        MenuItem exitItem = new MenuItem("Exit");
++
++        refreshItem.setOnAction(e -> refreshData());
++        exitItem.setOnAction(e -> System.exit(0));
++
++        fileMenu.getItems().addAll(refreshItem, new SeparatorMenuItem(), exitItem);
++
++        Menu helpMenu = new Menu("Help");
++        MenuItem aboutItem = new MenuItem("About");
++        helpMenu.getItems().add(aboutItem);
++
++        menuBar.getMenus().addAll(fileMenu, helpMenu);
++        return menuBar;
++    }
++
++    private void refreshData() {
++        customers.setAll(bankController.getAllCustomers());
++        showAlert("Data Refreshed", "Customer data has been refreshed.");
++    }
++
++    private TabPane createTabPane() {
++        TabPane tabPane = new TabPane();
++
++        Tab customerTab = new Tab("Customer Management");
++        customerTab.setClosable(false);
++        customerTab.setContent(createCustomerManagementPanel());
++
++        Tab accountTab = new Tab("Account Management");
++        accountTab.setClosable(false);
++        accountTab.setContent(createAccountManagementPanel());
++
++        Tab transactionTab = new Tab("Transactions");
++        transactionTab.setClosable(false);
++        transactionTab.setContent(createTransactionPanel());
++
++        tabPane.getTabs().addAll(customerTab, accountTab, transactionTab);
++        return tabPane;
++    }
++
++    private VBox createCustomerManagementPanel() {
++        VBox panel = new VBox(10);
++        panel.setPadding(new Insets(10));
++
++        Label title = new Label("Customer Management");
++        title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
++
++        GridPane formGrid = new GridPane();
++        formGrid.setHgap(10);
++        formGrid.setVgap(10);
++
++        TextField idField = new TextField();
++        TextField firstField = new TextField();
++        TextField surnameField = new TextField();
++        TextField addressField = new TextField();
++
++        formGrid.add(new Label("Customer ID:"), 0, 0);
++        formGrid.add(idField, 1, 0);
++        formGrid.add(new Label("First Name:"), 0, 1);
++        formGrid.add(firstField, 1, 1);
++        formGrid.add(new Label("Surname:"), 0, 2);
++        formGrid.add(surnameField, 1, 2);
++        formGrid.add(new Label("Address:"), 0, 3);
++        formGrid.add(addressField, 1, 3);
++
++        Button addBtn = new Button("Add Customer");
++        Button clearBtn = new Button("Clear");
++
++        addBtn.setOnAction(e -> {
++            boolean ok = bankController.addCustomer(
++                    idField.getText(),
++                    firstField.getText(),
++                    surnameField.getText(),
++                    addressField.getText()
++            );
++
++            if (ok) {
++                showAlert("Success", "Customer added!");
++                refreshData();
++                idField.clear();
++                firstField.clear();
++                surnameField.clear();
++                addressField.clear();
++            } else {
++                showAlert("Error", "Failed to add customer (duplicate ID?).");
++            }
++        });
++
++        clearBtn.setOnAction(e -> {
++            idField.clear();
++            firstField.clear();
++            surnameField.clear();
++            addressField.clear();
++        });
++
++        HBox buttonBox = new HBox(10, addBtn, clearBtn);
++
++        TableView<Customer> table = new TableView<>(customers);
++
++        TableColumn<Customer, String> idCol = new TableColumn<>("ID");
++        idCol.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getCustomerId()));
++
++        TableColumn<Customer, String> nameCol = new TableColumn<>("Name");
++        nameCol.setCellValueFactory(c ->
++                new javafx.beans.property.SimpleStringProperty(
++                        c.getValue().getFirstName() + " " + c.getValue().getSurname()));
++
++        TableColumn<Customer, String> addrCol = new TableColumn<>("Address");
++        addrCol.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getAddress()));
++
++        table.getColumns().addAll(idCol, nameCol, addrCol);
++
++        panel.getChildren().addAll(title, formGrid, buttonBox, new Label("Customers:"), table);
++
++        return panel;
++    }
++
++    private VBox createAccountManagementPanel() {
++        VBox panel = new VBox(10);
++        panel.setPadding(new Insets(10));
++
++        Label title = new Label("Account Management");
++        title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
++
++        ToggleGroup group = new ToggleGroup();
++        RadioButton savings = new RadioButton("Savings");
++        RadioButton investment = new RadioButton("Investment");
++        RadioButton cheque = new RadioButton("Cheque");
++
++        savings.setToggleGroup(group);
++        investment.setToggleGroup(group);
++        cheque.setToggleGroup(group);
++
++        HBox typeBox = new HBox(10, savings, investment, cheque);
++
++        GridPane form = new GridPane();
++        form.setHgap(10); form.setVgap(10);
++
++        TextField custField = new TextField();
++        TextField accNumField = new TextField();
++        TextField depositField = new TextField();
++        TextField branchField = new TextField();
++        TextField employerField = new TextField();
++        TextField companyField = new TextField();
++
++        form.add(new Label("Customer ID:"), 0, 0); form.add(custField, 1, 0);
++        form.add(new Label("Account Number:"), 0, 1); form.add(accNumField, 1, 1);
++        form.add(new Label("Initial Deposit:"), 0, 2); form.add(depositField, 1, 2);
++        form.add(new Label("Branch:"), 0, 3); form.add(branchField, 1, 3);
++        form.add(new Label("Employer (Cheque):"), 0, 4); form.add(employerField, 1, 4);
++        form.add(new Label("Company Address (Cheque):"), 0, 5); form.add(companyField, 1, 5);
++
++        Button openBtn = new Button("Open Account");
++        openBtn.setOnAction(e -> {
++            RadioButton selected = (RadioButton) group.getSelectedToggle();
++            if (selected == null) {
++                showAlert("Error", "Select account type!");
++                return;
++            }
++
++            String type = selected.getText();
++            double deposit;
++
++            try {
++                deposit = Double.parseDouble(depositField.getText());
++            } catch (Exception ex) {
++                showAlert("Error", "Invalid deposit amount.");
++                return;
++            }
++
++            boolean ok = false;
++
++            switch (type) {
++                case "Savings":
++                    ok = bankController.openSavingsAccount(
++                            accNumField.getText(), deposit, branchField.getText(), custField.getText());
++                    break;
++
++                case "Investment":
++                    ok = bankController.openInvestmentAccount(
++                            accNumField.getText(), deposit, branchField.getText(), custField.getText());
++                    break;
++
++                case "Cheque":
++                    ok = bankController.openChequeAccount(
++                            accNumField.getText(), deposit, branchField.getText(), custField.getText(),
++                            employerField.getText(), companyField.getText());
++                    break;
++            }
++
++            if (ok) showAlert("Success", type + " account opened.");
++            else showAlert("Error", "Failed to open account.");
++        });
++
++        panel.getChildren().addAll(title, typeBox, form, openBtn);
++        return panel;
++    }
++
++    private VBox createTransactionPanel() {
++        VBox panel = new VBox(10);
++        panel.setPadding(new Insets(10));
++
++        Label title = new Label("Transactions");
++        title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
++
++        GridPane form = new GridPane();
++        form.setHgap(10); form.setVgap(10);
++
++        TextField accField = new TextField();
++        TextField amountField = new TextField();
++        TextArea history = new TextArea();
++        history.setPrefHeight(200);
++
++        form.add(new Label("Account Number:"), 0, 0); form.add(accField, 1, 0);
++        form.add(new Label("Amount:"), 0, 1); form.add(amountField, 1, 1);
++
++        Button depositBtn = new Button("Deposit");
++        Button withdrawBtn = new Button("Withdraw");
++        Button balanceBtn = new Button("Check Balance");
++
++        depositBtn.setOnAction(e -> {
++            try {
++                double amt = Double.parseDouble(amountField.getText());
++                if (bankController.deposit(accField.getText(), amt)) {
++                    history.appendText("Deposited BWP " + amt + "\n");
++                } else showAlert("Error", "Deposit failed.");
++            } catch (Exception ex) {
++                showAlert("Error", "Invalid amount.");
++            }
++        });
++
++        withdrawBtn.setOnAction(e -> {
++            try {
++                double amt = Double.parseDouble(amountField.getText());
++                if (bankController.withdraw(accField.getText(), amt)) {
++                    history.appendText("Withdrew BWP " + amt + "\n");
++                } else showAlert("Error", "Withdrawal failed.");
++            } catch (Exception ex) {
++                showAlert("Error", "Invalid amount.");
++            }
++        });
++
++        balanceBtn.setOnAction(e -> {
++            bankController.getBalance(accField.getText())
++                    .ifPresentOrElse(
++                            bal -> {
++                                history.appendText("Balance: BWP " + bal + "\n");
++                                showAlert("Balance", "BWP " + bal);
++                            },
++                            () -> showAlert("Error", "Account not found.")
++                    );
++        });
++
++        HBox buttons = new HBox(10, depositBtn, withdrawBtn, balanceBtn);
++
++        panel.getChildren().addAll(title, form, buttons, new Label("Transaction History:"), history);
++        return panel;
++    }
++
++    private void showAlert(String t, String m) {
++        Alert a = new Alert(Alert.AlertType.INFORMATION);
++        a.setTitle(t);
++        a.setHeaderText(null);
++        a.setContentText(m);
++        a.showAndWait();
++    }
++
++    public static void main(String[] args) {
++        launch(args);
++    }
++}
